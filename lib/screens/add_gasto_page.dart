@@ -15,7 +15,6 @@ class _AddGastoPageState extends State<AddGastoPage> {
   final TextEditingController descricaoController = TextEditingController();
   final DatabaseHelper dbHelper = DatabaseHelper();
 
-
   bool isEntrada = true;
   IconData? iconeSelecionado;
 
@@ -62,16 +61,21 @@ class _AddGastoPageState extends State<AddGastoPage> {
     final valor = double.tryParse(valorController.text) ?? 0.0;
     final descricao = descricaoController.text;
 
-    final Gastos dados = Gastos(tipoDoGasto: tipo, valor: valor, entrada: isEntrada ? 1 : 0, iconCode: iconeSelecionado!.codePoint, descricao: descricao);
-     
+    final Gastos dados = Gastos(
+      tipoDoGasto: tipo,
+      valor: valor,
+      entrada: isEntrada ? 1 : 0,
+      iconCode: iconeSelecionado!.codePoint,
+      descricao: descricao,
+    );
 
     DatabaseHelper.addGastos(dados);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Transação salva com sucesso!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Transação salva com sucesso!')));
 
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override
@@ -85,57 +89,75 @@ class _AddGastoPageState extends State<AddGastoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary, title: Text('Adicionar Gasto/Entrada')),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text('Adicionar Gasto/Entrada'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             TextField(
               controller: tipoController,
-              decoration: InputDecoration(labelText: 'Tipo do Gasto', border: OutlineInputBorder(),),
+              decoration: InputDecoration(
+                labelText: 'Tipo do Gasto',
+                border: OutlineInputBorder(),
+              ),
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 15),
             TextField(
               controller: valorController,
-              decoration: InputDecoration(labelText: 'Valor (ex: 50.00)', border: OutlineInputBorder(),),
+              decoration: InputDecoration(
+                labelText: 'Valor (ex: 50.00)',
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 15),
             TextField(
               controller: descricaoController,
-              decoration: InputDecoration(labelText: 'Descrição (Opicional)', border: OutlineInputBorder(),),
+              decoration: InputDecoration(
+                labelText: 'Descrição (Opicional)',
+                border: OutlineInputBorder(),
+              ),
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 15),
             SwitchListTile(
               title: Text(isEntrada ? 'Tipo: Entrada' : 'Tipo: Gasto'),
               value: isEntrada,
               onChanged: (value) => setState(() => isEntrada = value),
             ),
             SizedBox(height: 20),
-            Text('Selecione um ícone:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Selecione um ícone:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 10),
             GridView.count(
               crossAxisCount: 5,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: icones.map((icone) {
-                final selecionado = iconeSelecionado == icone;
-                return GestureDetector(
-                  onTap: () => _selecionarIcone(icone),
-                  child: Container(
-                    margin: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: selecionado ? Colors.blue[100] : Colors.grey[200],
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: selecionado ? Colors.blue : Colors.transparent,
-                        width: 2,
+              children:
+                  icones.map((icone) {
+                    final selecionado = iconeSelecionado == icone;
+                    return GestureDetector(
+                      onTap: () => _selecionarIcone(icone),
+                      child: Container(
+                        margin: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color:
+                              selecionado ? Colors.blue[100] : Colors.grey[200],
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color:
+                                selecionado ? Colors.blue : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                        child: Icon(icone, size: 30, color: Colors.black87),
                       ),
-                    ),
-                    child: Icon(icone, size: 30, color: Colors.black87),
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
             ),
             SizedBox(height: 20),
             FilledButton.icon(

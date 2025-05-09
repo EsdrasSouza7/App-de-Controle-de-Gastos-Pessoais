@@ -12,10 +12,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Map<int, bool> _expandidos = {};
   final DatabaseHelper dbHelper = DatabaseHelper();
+  double valorTotal = 0;
+
+  void atualizarTela(){
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       drawer: Drawer(
         child: Column(
@@ -44,20 +48,30 @@ class _HomePageState extends State<HomePage> {
         child: FutureBuilder<List<Gastos>?>(
           future: DatabaseHelper.getAllGastos(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
+            if (snapshot.hasError) {
               return Center(child: Text('Erro: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(child: Text('Nenhum gasto/entrada encontrado.'));
             }
 
             final gastos = snapshot.data!;
+            double valorAtual = 0;
 
             return ListView.builder(
+              itemCount: gastos.length,
               itemBuilder: (context, index) {
                 final expandido = _expandidos[index] ?? false;
                 final gasto = gastos[index];
+
+                if (gasto.entrada == 1){
+                  valorAtual += gasto.valor;
+                  valorTotal = valorAtual;
+                  atualizarTela();
+                }else{
+                  valorAtual -= gasto.valor;
+                  valorTotal = valorAtual;
+                  atualizarTela();
+                }
 
                 return Column(
                   children: [
@@ -65,9 +79,17 @@ class _HomePageState extends State<HomePage> {
                     ListTile(
                       minTileHeight: 70,
                       leading: Icon(Icons.money, size: 45),
-                      title: Text(gasto.tipoDoGasto, style: TextStyle(fontSize: 20)),
+                      title: Text(
+                        gasto.tipoDoGasto,
+                        style: TextStyle(fontSize: 20),
+                      ),
                       // ignore: unrelated_type_equality_checks
-                      trailing: Text('R\$ ${gasto.valor.toStringAsFixed(2)}',style: TextStyle(fontSize: 20, color: gasto.entrada == 1 ? Colors.green : Colors.red),
+                      trailing: Text(
+                        'R\$ ${gasto.valor.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: gasto.entrada == 1 ? Colors.green : Colors.red,
+                        ),
                       ),
                       onTap: () {
                         setState(() {
@@ -109,7 +131,45 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Divider(),
-                            Text(gasto.descricao == null ? gasto.descricao! : "Sem Descrição"),
+                            Text(
+                              gasto.descricao != ""
+                                  ? gasto.descricao!
+                                  : "Sem Descrição",
+                            ),
+                            SizedBox(height: 25),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: 35,
+                                  width: 105,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll<Color>(
+                                            Colors.red,
+                                          ),
+                                    ),
+                                    onPressed: () {},
+                                    child: Text("Deletar", style: TextStyle(color: Colors.white)),
+                                  ),
+                                ),
+                                SizedBox(width: 20),
+                                SizedBox(
+                                  height: 35,
+                                  width: 105,
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll<Color>(
+                                            Colors.blue,
+                                          ),
+                                    ),
+                                    onPressed: () {},
+                                    child: Text("Atualizar", style: TextStyle(color: Colors.white)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -129,7 +189,14 @@ class _HomePageState extends State<HomePage> {
 
       //Butões
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {Navigator.of(context).pushNamed('/add')},
+        onPressed:
+            () => {
+              Navigator.pushNamed(context, '/add').then((salvou) {
+                if (salvou == true) {
+                  setState(() {});
+                }
+              }),
+            },
         child: Icon(Icons.add),
       ),
       bottomNavigationBar: Container(
@@ -148,7 +215,7 @@ class _HomePageState extends State<HomePage> {
               child: Text('BOTÃO'),
             ),
             Text(
-              'Total: R\$250',
+              'Total: R\$ $valorTotal',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
