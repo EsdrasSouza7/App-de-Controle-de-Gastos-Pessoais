@@ -1,5 +1,6 @@
 import 'package:controle_de_gasto/app_controler.dart';
-import 'package:controle_de_gasto/home_page.dart';
+import 'package:controle_de_gasto/screens/add_gasto_page.dart';
+import 'package:controle_de_gasto/screens/home_page.dart';
 import 'package:flutter/material.dart';
 
 class AppWidget extends StatelessWidget {
@@ -20,6 +21,7 @@ class AppWidget extends StatelessWidget {
           routes: {
            // '/': (context) => (),
             '/home': (context) => HomePage(),
+            '/add': (context) => AddGastoPage()
           },
         );
       },
