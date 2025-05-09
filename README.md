@@ -1,16 +1,31 @@
-# controle_de_gasto
+# 💸 App de Controle de Gastos Pessoais (Ainda em Desenvolvimento)
 
-A new Flutter project.
+Aplicativo mobile desenvolvido com Flutter para gerenciamento de finanças pessoais. Permite cadastrar despesas, categorizar, visualizar gráficos e consultar o histórico de gastos.
 
-## Getting Started
+## 📱 Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Cadastro de despesas com valor, data, categoria e descrição
+- Visualização de despesas por período
+- Gráficos de pizza e barra para análise
+- Armazenamento local com SQLite
+- Interface responsiva
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Tecnologias
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter + Dart
+- SQLite (armazenamento local)
+- Provider (gerenciamento de estado)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📷 Imagens
+
+Ainda em Desenvolvimento
+![Tela inicial](prints/home.png)
+![Gráfico de gastos](prints/grafico.png)
+
+## 📦 Como rodar o projeto
+
+```bash
+git clone https://github.com/seunome/controle-gastos.git
+cd controle-gastos
+flutter pub get
+flutter run
