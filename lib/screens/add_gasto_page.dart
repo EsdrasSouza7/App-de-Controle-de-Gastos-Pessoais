@@ -3,22 +3,39 @@ import 'package:controle_de_gasto/services/database_helper.dart';
 import 'package:flutter/material.dart';
 
 class AddGastoPage extends StatefulWidget {
-  const AddGastoPage({super.key});
+  final Gastos? gasto;
+  const AddGastoPage({
+    super.key,
+    this.gasto
+  });
 
   @override
   State<AddGastoPage> createState() => _AddGastoPageState();
 }
 
 class _AddGastoPageState extends State<AddGastoPage> {
-  final TextEditingController tipoController = TextEditingController();
-  final TextEditingController valorController = TextEditingController();
-  final TextEditingController descricaoController = TextEditingController();
+  late TextEditingController tipoController;
+  late TextEditingController valorController;
+  late TextEditingController descricaoController;
   final DatabaseHelper dbHelper = DatabaseHelper();
-
   bool isEntrada = true;
+  DateTime data = DateTime.now();
+  dynamic id;
   IconData? iconeSelecionado;
-
   bool podeSalvar = false;
+
+@override
+void initState() {
+  super.initState();
+  id = widget.gasto?.id;
+  tipoController = TextEditingController(text: widget.gasto?.tipoDoGasto ?? '');
+  descricaoController = TextEditingController(text: widget.gasto?.descricao ?? '');
+  valorController = TextEditingController(text: widget.gasto?.valor.toString() ?? '');
+  isEntrada = !(widget.gasto?.entrada == 0);
+  data = widget.gasto != null ? DateTime.parse(widget.gasto!.data) : DateTime.now();
+  tipoController.addListener(_validarCampos);
+  valorController.addListener(_validarCampos);
+}
 
   final List<IconData> icones = [
     Icons.shopping_cart,
@@ -32,13 +49,6 @@ class _AddGastoPageState extends State<AddGastoPage> {
     Icons.card_giftcard,
     Icons.flight,
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    tipoController.addListener(_validarCampos);
-    valorController.addListener(_validarCampos);
-  }
 
   void _validarCampos() {
     final tipo = tipoController.text.trim();
@@ -60,20 +70,29 @@ class _AddGastoPageState extends State<AddGastoPage> {
     final tipo = tipoController.text;
     final valor = double.tryParse(valorController.text) ?? 0.0;
     final descricao = descricaoController.text;
+    final String dataStr = DateTime.now().toIso8601String(); // "2025-05-08T18:30:00"
 
     final Gastos dados = Gastos(
+      id: id,
       tipoDoGasto: tipo,
       valor: valor,
+      data: dataStr,
       entrada: isEntrada ? 1 : 0,
       iconCode: iconeSelecionado!.codePoint,
       descricao: descricao,
     );
 
-    DatabaseHelper.addGastos(dados);
-
-    ScaffoldMessenger.of(
+    if (widget.gasto == null) {
+      DatabaseHelper.addGastos(dados);
+      ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('Transação salva com sucesso!')));
+    } else {
+       DatabaseHelper().updateGasto(dados);
+       ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Transação editada com sucesso!')));
+    }
 
     Navigator.pop(context, true);
   }
@@ -86,6 +105,7 @@ class _AddGastoPageState extends State<AddGastoPage> {
     super.dispose();
   }
 
+  //BUILD
   @override
   Widget build(BuildContext context) {
     return Scaffold(
