@@ -1,3 +1,4 @@
+import 'package:controle_de_gasto/app_controler.dart';
 import 'package:controle_de_gasto/models/gastos_models.dart';
 import 'package:controle_de_gasto/screens/add_gasto_page.dart';
 import 'package:controle_de_gasto/services/database_helper.dart';
@@ -14,6 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Map<int, bool> _expandidos = {};
   final DatabaseHelper dbHelper = DatabaseHelper();
+  DateTime dataAtual = DateTime.now();
+  late dynamic mes;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class _HomePageState extends State<HomePage> {
               subtitle: Text("Mostra o historico de Gastos dos Meses"),
               onTap:
                   () => {
-                    //TODO fazer Pagina de Historico
+                    Navigator.pushNamed(context, '/historico')
                   },
               leading: Icon(Icons.history),
             ),
@@ -40,13 +43,15 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Controle de Gastos"),
+        actions: [CustomSwitch()],
+        
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         //body
         child: FutureBuilder<List<Gastos>?>(
-          future: DatabaseHelper.getAllGastos(),
+          future: DatabaseHelper.getGastosDoMes(dataAtual.year, dataAtual.month),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Erro: ${snapshot.error}'));
@@ -63,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                 final gasto = gastos[index];
                 DateTime data = DateTime.parse(
                   gasto.data,
-                ); // ou fromMillisecondsSinceEpoch
+                ); 
 
                 String dataFormatada = DateFormat(
                   'dd/MM/yyyy',
@@ -75,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                     //ListTile
                     ListTile(
                       minTileHeight: 70,
-                      leading: Icon(Icons.money, size: 45),
+                      leading: Icon(gasto.icon, size: 45),
                       title: Text(
                         gasto.tipoDoGasto,
                         style: TextStyle(fontSize: 20),
@@ -205,11 +210,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ).then((_) => setState(() {})); // recarrega após voltar
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.black,),
       ),
       //Valores Embaixo
       bottomNavigationBar: FutureBuilder(
-        future: DatabaseHelper.getAllGastos(),
+        future: DatabaseHelper.getGastosDoMes(dataAtual.year, dataAtual.month),
         builder: (context, snapshot) {
           double entradas = 0;
           double saidas = 0;
@@ -260,8 +265,8 @@ class _HomePageState extends State<HomePage> {
             unselectedLabelStyle: TextStyle(fontSize: 20),
             selectedLabelStyle: TextStyle(fontSize: 20),
             selectedItemColor: saldo > 0 ? Colors.green : Colors.red,
-            unselectedItemColor: Colors.black,
-            backgroundColor: const Color.fromARGB(255, 235, 235, 235),
+            unselectedItemColor: AppControler.instance.isdartTheme ? const Color.fromARGB(255, 235, 235, 235) : Colors.black,
+            backgroundColor: AppControler.instance.isdartTheme ? Colors.black : const Color.fromARGB(255, 235, 235, 235),
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.arrow_downward, color: Colors.green),
@@ -305,5 +310,23 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(
         builder: (_) => AddGastoPage(gasto: gasto,), // passando o gasto
       ), ).then((_) => setState(() {}),); // recarrega após voltar
+  }
+}
+class CustomSwitch extends StatelessWidget {
+  const CustomSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(Icons.dark_mode),
+        Switch(
+          value: AppControler.instance.isdartTheme,
+          onChanged: (value) {
+            AppControler.instance.changeTheme();
+          },
+        ),
+      ],
+    );
   }
 }

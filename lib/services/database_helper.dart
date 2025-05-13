@@ -28,25 +28,14 @@ class DatabaseHelper {
     );
   }
 
-  static Future<int> updateGastos(Gastos gasto) async {
+  Future<int> updateGasto(Gastos gasto) async {
     final db = await _getDB();
     return await db.update(
-      "Gastos",
+      'Gastos',
       gasto.toJson(),
       where: 'id = ?',
       whereArgs: [gasto.id],
       conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<int> updateGasto(Gastos gasto) async {
-  final db = await _getDB();
-  return await db.update(
-    'Gastos',
-    gasto.toJson(),
-    where: 'id = ?',
-    whereArgs: [gasto.id],
-    conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
@@ -66,17 +55,35 @@ class DatabaseHelper {
     return List.generate(maps.length, (index) => Gastos.fromJson(maps[index]));
   }
 
-  Future<double> getTotalEntradas() async {
-  final db = await _getDB();
-  final result = await db.rawQuery('SELECT SUM(valor) as total FROM gastos WHERE isEntrada = 1');
-  final total = result.first['total'];
-  return total != null ? (total as num).toDouble() : 0.0;
-}
+  Future<List<String>> getMesesComGastos() async {
+    final db = await _getDB();
 
-Future<double> getTotalSaidas() async {
+    final resultado = await db.rawQuery('''
+    SELECT DISTINCT strftime('%Y-%m', data) as mes
+    FROM gastos
+    ORDER BY mes DESC
+  ''');
+
+    return resultado.map((row) => row['mes'] as String).toList();
+  }
+
+  static Future<List<Gastos>> getGastosDoMes(int ano, int mes) async {
   final db = await _getDB();
-  final result = await db.rawQuery('SELECT SUM(valor) as total FROM gastos WHERE isEntrada = 0');
-  final total = result.first['total'];
-  return total != null ? (total as num).toDouble() : 0.0;
-}
+
+  // Define o primeiro e o último dia do mês
+  final primeiroDia = DateTime(ano, mes, 1);
+  final ultimoDia = DateTime(ano, mes + 1, 1).subtract(Duration(days: 1));
+
+  final primeiroStr = primeiroDia.toIso8601String();
+  final ultimoStr = ultimoDia.add(Duration(days: 1)).toIso8601String(); // inclui o dia final
+
+  final resultado = await db.query(
+    'gastos',
+    where: 'data >= ? AND data < ?',
+    whereArgs: [primeiroStr, ultimoStr],
+  );
+
+  return resultado.map((map) => Gastos.fromJson(map)).toList();
+  }
+
 }
