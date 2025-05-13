@@ -5,40 +5,28 @@ import 'package:controle_de_gasto/services/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HistoricoMesPage extends StatefulWidget {
+  final String? mesAno;
+  const HistoricoMesPage({super.key, this.mesAno});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HistoricoMesPage> createState() => _HistoricoMesPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HistoricoMesPageState extends State<HistoricoMesPage> {
   final Map<int, bool> _expandidos = {};
   final DatabaseHelper dbHelper = DatabaseHelper();
-  DateTime dataAtual = DateTime.now();
+  late List<int> mes;
+
+  @override
+  void initState(){
+    super.initState();
+    mes = separaMesAno(widget.mesAno!);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: Column(
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text('Controle de Gasto'),
-              accountEmail: Text(""),
-            ),
-            ListTile(
-              title: Text("Historico"),
-              subtitle: Text("Mostra o historico de Gastos dos Meses"),
-              onTap:
-                  () => {
-                    Navigator.pushNamed(context, '/historico')
-                  },
-              leading: Icon(Icons.history),
-            ),
-          ],
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Controle de Gastos"),
@@ -50,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         height: MediaQuery.of(context).size.height,
         //body
         child: FutureBuilder<List<Gastos>?>(
-          future: DatabaseHelper.getGastosDoMes(dataAtual.year, dataAtual.month),
+          future: DatabaseHelper.getGastosDoMes(mes[0], mes[1]),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Erro: ${snapshot.error}'));
@@ -198,22 +186,9 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-
-      //Butões
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => AddGastoPage(), // passando o gasto
-            ),
-          ).then((_) => setState(() {})); // recarrega após voltar
-        },
-        child: Icon(Icons.add, color: Colors.black,),
-      ),
       //Valores Embaixo
       bottomNavigationBar: FutureBuilder(
-        future: DatabaseHelper.getGastosDoMes(dataAtual.year, dataAtual.month),
+        future: DatabaseHelper.getGastosDoMes(mes[0], mes[1]),
         builder: (context, snapshot) {
           double entradas = 0;
           double saidas = 0;
@@ -291,6 +266,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  dynamic separaMesAno(String mes) {
+    final partes = mes.split('-');
+    List<int> listFinal = List.filled(2, 0);
+    listFinal[0] = int.parse(partes[0]);
+    listFinal[1] = int.parse(partes[1]);
+
+    return listFinal;
+  }
+
   void deletarGasto(BuildContext context, Gastos gasto) {
     showDialog(context: context, builder: (context){
       return AlertDialog(
@@ -310,7 +294,10 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => AddGastoPage(gasto: gasto,), // passando o gasto
       ), ).then((_) => setState(() {}),); // recarrega após voltar
   }
+
+  
 }
+
 class CustomSwitch extends StatelessWidget {
   const CustomSwitch({super.key});
 

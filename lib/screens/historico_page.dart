@@ -1,3 +1,4 @@
+import 'package:controle_de_gasto/screens/historico_mes_page.dart';
 import 'package:controle_de_gasto/services/database_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -50,12 +51,12 @@ class _HistoricoPageState extends State<HistoricoPage> {
                             if (isMesAtual(mes)) {
                               Navigator.pop(context);
                             } else {
-                              /* Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => {},
+                                  builder: (_) => HistoricoMesPage(mesAno: mes,),
                                 ),
-                              ); */
+                              );
                             }
                           },
                         ),
