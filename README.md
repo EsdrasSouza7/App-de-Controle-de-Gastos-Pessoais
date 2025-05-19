@@ -17,8 +17,7 @@ Aplicativo mobile desenvolvido com Flutter para gerenciamento de finanças pesso
 
 ## 📷 Imagens
 
-![Tela inicial](prints/Screenshot_1747684409.png)
-![Gráfico de gastos](prints/grafico.png)
+<img src="prints/Screenshot_1747684456.png" width="300" />  <img src="prints/Screenshot_1747684466.png" width="300" />  <img src="prints/Screenshot_1747684486.png" width="300" />  <img src="prints/Screenshot_1747684504.png" width="300" />
 
 ## 📦 Como rodar o projeto
 
