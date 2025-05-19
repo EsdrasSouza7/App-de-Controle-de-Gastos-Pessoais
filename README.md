@@ -1,12 +1,12 @@
-# 💸 App de Controle de Gastos Pessoais (Ainda em Desenvolvimento)
+# 💸 App de Controle de Gastos Pessoais
 
-Aplicativo mobile desenvolvido com Flutter para gerenciamento de finanças pessoais. Permite cadastrar despesas, categorizar, visualizar gráficos e consultar o histórico de gastos.
+Aplicativo mobile desenvolvido com Flutter para gerenciamento de finanças pessoais. Permite cadastrar gastos, categorizar, visualizar gráficos e consultar o histórico de gastos.
 
 ## 📱 Funcionalidades
 
-- Cadastro de despesas com valor, data, categoria e descrição
-- Visualização de despesas por período
-- Gráficos de pizza e barra para análise
+- Cadastro de gastos/entradas com valor, data, categoria e descrição
+- Visualização de despesas por mês
+- Gráficos de pizza e linha para análise
 - Armazenamento local com SQLite
 - Interface responsiva
 
@@ -14,12 +14,10 @@ Aplicativo mobile desenvolvido com Flutter para gerenciamento de finanças pesso
 
 - Flutter + Dart
 - SQLite (armazenamento local)
-- Provider (gerenciamento de estado)
 
 ## 📷 Imagens
 
-Ainda em Desenvolvimento
-![Tela inicial](prints/home.png)
+![Tela inicial](prints/Screenshot_1747684409.png)
 ![Gráfico de gastos](prints/grafico.png)
 
 ## 📦 Como rodar o projeto
