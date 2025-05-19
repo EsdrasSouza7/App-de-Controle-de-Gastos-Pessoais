@@ -146,6 +146,7 @@ void initState() {
               title: Text(isEntrada ? 'Tipo: Entrada' : 'Tipo: Gasto'),
               value: isEntrada,
               onChanged: (value) => setState(() => isEntrada = value),
+              activeColor: Colors.yellow[700],
             ),
             SizedBox(height: 20),
             Text(
@@ -181,8 +182,8 @@ void initState() {
             ),
             SizedBox(height: 20),
             FilledButton.icon(
-              icon: Icon(Icons.save),
-              label: Text('Salvar Transação'),
+              icon: Icon(Icons.save, color: Colors.black,),
+              label: Text('Salvar Transação', style: TextStyle(color: Colors.black)),
               onPressed: podeSalvar ? salvarTransacao : null,
             ),
           ],

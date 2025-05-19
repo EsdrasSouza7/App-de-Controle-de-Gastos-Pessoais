@@ -1,4 +1,5 @@
 import 'package:controle_de_gasto/app_controler.dart';
+import 'package:controle_de_gasto/screens/grafico_page.dart';
 import 'package:controle_de_gasto/screens/historico_page.dart';
 import 'package:controle_de_gasto/screens/home_page.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class AppWidget extends StatelessWidget {
             // '/': (context) => (),
             '/home': (context) => HomePage(),
             '/historico': (context) => HistoricoPage(),
+            '/grafico': (context) => GraficoPage(),
           },
         );
       },

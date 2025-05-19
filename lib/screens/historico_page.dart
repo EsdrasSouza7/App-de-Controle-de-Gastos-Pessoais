@@ -16,14 +16,16 @@ class _HistoricoPageState extends State<HistoricoPage> {
       appBar: AppBar(
         title: Text("Historico"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        //TODO Modo Escuro
       ),
       body: SizedBox(
         child: FutureBuilder<List<String>>(
           future: DatabaseHelper().getMesesComGastos(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator();
-
+            if (snapshot.data == null){
+              return Center(child:  Text("Nenhum Historico Encontrado"));
+            }else if (snapshot.data!.isEmpty){
+              return Center(child:  Text("Nenhum Historico Encontrado"));
+            }
             final meses = snapshot.data!;
             return SizedBox(
               height: MediaQuery.of(context).size.height,
@@ -31,37 +33,42 @@ class _HistoricoPageState extends State<HistoricoPage> {
                 itemCount: meses.length,
                 itemBuilder: (context, index) {
                   final mes = meses[index];
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height / 13,
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 0.5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            formatarMes(mes),
-                            style: TextStyle(fontSize: 22),
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 70,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 0.5),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                formatarMes(mes),
+                                style: TextStyle(fontSize: 22),
+                              ),
+                              subtitle:
+                                  isMesAtual(mes) ? Text("Mês Atual") : Text(''),
+                              onTap: () {
+                                if (isMesAtual(mes)) {
+                                  Navigator.pop(context);
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => HistoricoMesPage(mesAno: mes,),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           ),
-                          subtitle:
-                              isMesAtual(mes) ? Text("Mês Atual") : Text(''),
-                          onTap: () {
-                            if (isMesAtual(mes)) {
-                              Navigator.pop(context);
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => HistoricoMesPage(mesAno: mes,),
-                                ),
-                              );
-                            }
-                          },
                         ),
                       ),
-                    ),
+                      SizedBox(height: 5,)
+                    ],
                   );
                 },
               ),

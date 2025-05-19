@@ -29,9 +29,8 @@ class _HistoricoMesPageState extends State<HistoricoMesPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Controle de Gastos"),
+        title: Text("Gastos de ${mes[1]}/${mes[0]}"),
         actions: [CustomSwitch()],
-        
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
