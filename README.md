@@ -26,3 +26,5 @@ git clone https://github.com/seunome/controle-gastos.git
 cd controle-gastos
 flutter pub get
 flutter run
+```
+Ou Baixando o APk no Releases
